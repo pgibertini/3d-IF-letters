@@ -116,6 +116,6 @@ PRICE_PER_M2 = 23.9 / (2.5 * 1.22)
 prix_lambourde = round(PRICE_PER_M * (length_I + length_FF), 2)
 prix_contreplaque = round(PRICE_PER_M2 * (area_I + area_FF), 2)
 
-print(f"Cout lambourde estimé: {prix_lambourde}€")
-print(f"Cout contreplaqué estimé: {prix_contreplaque}€")
+print(f"Coût lambourde estimé: {prix_lambourde}€")
+print(f"Coût contreplaqué estimé: {prix_contreplaque}€")
 print(f"Coût total estimé: {round(prix_lambourde+prix_contreplaque, 2)}€")
