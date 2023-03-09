@@ -35,10 +35,10 @@ coord_FF = [
 
 # OPTIMISATION HAUTEUR
 LARGEUR_TRUSS = 0.289
-LARGEUR_LAMBOURDE = 0.038
+LARGEUR_LAMBOURDE = 0.068
 EPAISSEUR_CONTREPLAQUE = 0.005
 
-largeur_opti = LARGEUR_TRUSS + 4 * LARGEUR_LAMBOURDE + 2 * EPAISSEUR_CONTREPLAQUE
+largeur_opti = LARGEUR_TRUSS + 2 * LARGEUR_LAMBOURDE + 2 * EPAISSEUR_CONTREPLAQUE
 hauteur_opti = coord_I[1][1] / coord_I[2][0] * largeur_opti
 HAUTEUR = hauteur_opti
 print(f"Hauteur: {HAUTEUR}m\n")
@@ -56,8 +56,8 @@ contour_I = ClosedPolygon2D(points_I)
 contour_F = ClosedPolygon2D(points_F)
 contours_FF = [ClosedPolygon2D(points) for points in points_FF]
 
-# contour_I.plot()
-# contour_F.plot()
+contour_I.plot()
+contour_F.plot()
 
 volume_I = ExtrudedProfile(
     volmdlr.O3D, volmdlr.X3D, volmdlr.Z3D, contour_I, [], volmdlr.Y3D * points_I[0].point_distance(points_I[-1])
@@ -86,7 +86,7 @@ volume_FF = VolumeModel(
 # volume_FF.babylonjs()
 
 structure = VolumeModel([volume_I, *volume_FF.translation(Vector3D(0.4 * HAUTEUR, 0.4 * HAUTEUR, 0.0)).primitives])
-# structure.babylonjs()
+structure.babylonjs()
 
 # LENGTH ESTIMATION
 
