@@ -33,6 +33,21 @@ coord_FF = [
     [(0.0, 0.84), (0.0, 1.0), (0.6, 1.0), (0.6, 0.84)],
 ]
 
+# OPTIMISATION HAUTEUR
+LARGEUR_TRUSS = 0.289
+LARGEUR_LAMBOURDE = 0.038
+EPAISSEUR_CONTREPLAQUE = 0.005
+
+largeur_opti = LARGEUR_TRUSS + 4 * LARGEUR_LAMBOURDE + 2 * EPAISSEUR_CONTREPLAQUE
+hauteur_opti = coord_I[1][1] / coord_I[2][0] * largeur_opti
+HAUTEUR = hauteur_opti
+print(f"Hauteur: {HAUTEUR}m\n")
+
+
+coord_I = [(x * HAUTEUR, y * HAUTEUR) for (x, y) in coord_I]
+coord_F = [(x * HAUTEUR, y * HAUTEUR) for (x, y) in coord_F]
+coord_FF = [[(x * HAUTEUR, y * HAUTEUR) for (x, y) in coord] for coord in coord_FF]
+
 points_I = [Point2D(x, y) for (x, y) in coord_I]
 points_F = [Point2D(x, y) for (x, y) in coord_F]
 points_FF = [[Point2D(x, y) for (x, y) in coord] for coord in coord_FF]
@@ -70,5 +85,37 @@ volume_FF = VolumeModel(
 # volume_F.babylonjs()
 # volume_FF.babylonjs()
 
-structure = VolumeModel([volume_I, *volume_FF.translation(Vector3D(0.4, 0.4, 0.0)).primitives])
-structure.babylonjs()
+structure = VolumeModel([volume_I, *volume_FF.translation(Vector3D(0.4 * HAUTEUR, 0.4 * HAUTEUR, 0.0)).primitives])
+# structure.babylonjs()
+
+# LENGTH ESTIMATION
+
+length_I = 4 * contour_I.primitives[0].length() + 6 * contour_I.primitives[1].length()
+length_FF = sum(4 * contour.primitives[0].length() + 6 * contour.primitives[1].length() for contour in contours_FF)
+
+print(f"Longueur estimé I: {length_I}m")
+print(f"Longueur estimé FF: {length_FF}m")
+print()
+
+# AREA ESTIMATION
+
+area_I = round(sum(p.surface2d.area() for p in volume_I.primitives), 2)
+area_FF = round(sum(sum(p.surface2d.area() for p in volume.primitives) for volume in volume_FF.primitives), 2)
+
+print(f"Surface estimé I: {area_I}m²")
+print(f"Surface estimé FF: {area_FF}m²")
+print()
+
+# PRICE ESTIMATION
+# https://www.leroymerlin.fr/produits/materiaux/bois-de-charpente-bois-brut-et-dalle-de-construction/ossature-bois-et-bois-de-charpente/chevron-lambourde-et-bastaing/lambourde-1-2-chevron-sapin-traite-38x63-mm-longueur-4-m-choix-2-classe-2-70028252.html?src=clk
+# https://www.leroymerlin.fr/produits/menuiserie/panneau-planche-et-materiaux-bois/panneau-bois-agglomere-mdf/panneau-bois-recoupable/panneau-contreplaque-ordinaire-ep-5-mm-x-l-250-x-l-122-cm-67292694.html?src=clk
+
+PRICE_PER_M = 6.3 / 4
+PRICE_PER_M2 = 23.9 / (2.5 * 1.22)
+
+prix_lambourde = round(PRICE_PER_M * (length_I + length_FF), 2)
+prix_contreplaque = round(PRICE_PER_M2 * (area_I + area_FF), 2)
+
+print(f"Cout lambourde estimé: {prix_lambourde}€")
+print(f"Cout contreplaqué estimé: {prix_contreplaque}€")
+print(f"Coût total estimé: {round(prix_lambourde+prix_contreplaque, 2)}€")
